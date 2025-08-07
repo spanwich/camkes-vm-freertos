@@ -45,3 +45,7 @@ __pycache__/
 
 # Repo tool files
 .repo/
+
+# Node.js dependencies
+qemu-input-mcp/node_modules/
+qemu-input-mcp/package-lock.json
