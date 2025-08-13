@@ -14,19 +14,23 @@ set(cpp_includes "${CAMKES_VM_DIR}/components/VM_Arm")
 
 # Create our CPP Flags based on ARM VM config variables
 if("${KernelARMPlatform}" STREQUAL "qemu-arm-virt")
-    # Build FreeRTOS from source
+    # Use the pre-built working FreeRTOS binary directly
+    set(FREERTOS_BINARY_PATH "/home/konton-otome/phd/freertos_vexpress_a9/Build/freertos_image.bin")
+    
+    # Copy working FreeRTOS binary to build directory  
     add_custom_command(
-        OUTPUT "${CMAKE_CURRENT_LIST_DIR}/qemu-arm-virt/freertos_build/minimal_uart_virt.elf"
-        COMMAND make -C "${CMAKE_CURRENT_LIST_DIR}/qemu-arm-virt/freertos_build" -f minimal_virt.mk
-        DEPENDS "${CMAKE_CURRENT_LIST_DIR}/qemu-arm-virt/freertos_build/minimal_main_virt.c"
-                "${CMAKE_CURRENT_LIST_DIR}/qemu-arm-virt/freertos_build/minimal_startup_virt.S"
-                "${CMAKE_CURRENT_LIST_DIR}/qemu-arm-virt/freertos_build/minimal_virt.ld"
-                "${CMAKE_CURRENT_LIST_DIR}/qemu-arm-virt/freertos_build/minimal_virt.mk"
+        OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/freertos_image.bin"
+        COMMAND ${CMAKE_COMMAND} -E copy "${FREERTOS_BINARY_PATH}" "${CMAKE_CURRENT_BINARY_DIR}/freertos_image.bin"
+        DEPENDS "${FREERTOS_BINARY_PATH}"
+        COMMENT "Copying working FreeRTOS binary to build directory"
         VERBATIM
     )
     
-    # Use FreeRTOS ELF directly as the "linux" kernel (preserves entry point metadata)
-    AddToFileServer("linux" "${CMAKE_CURRENT_LIST_DIR}/qemu-arm-virt/freertos_build/minimal_uart_virt.elf")
+    # Create custom target for FreeRTOS binary
+    add_custom_target(freertos_binary DEPENDS "${CMAKE_CURRENT_BINARY_DIR}/freertos_image.bin")
+    
+    # Add FreeRTOS binary to file server as "linux" (default name expected by VM component)
+    AddToFileServer("linux" "${CMAKE_CURRENT_BINARY_DIR}/freertos_image.bin" DEPENDS freertos_binary)
 
     set(cpp_flags "-DKERNELARMPLATFORM_QEMU-ARM-VIRT")
 

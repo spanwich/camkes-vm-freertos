@@ -10,7 +10,8 @@ if(NOT "${PLATFORM}" IN_LIST supported)
          Supported: ${supported}")
 endif()
 if(${PLATFORM} STREQUAL "qemu-arm-virt")
-    # force cpu
+    # force cpu for ARM 32-bit compatibility with FreeRTOS
     set(QEMU_MEMORY "2048")
-    set(KernelArmCPU cortex-a53 CACHE STRING "" FORCE)
+    set(KernelArmCPU cortex-a15 CACHE STRING "" FORCE)
+    set(KernelSel4Arch arm_hyp CACHE STRING "" FORCE)
 endif()
