@@ -15,7 +15,7 @@ set(cpp_includes "${CAMKES_VM_DIR}/components/VM_Arm")
 # Create our CPP Flags based on ARM VM config variables
 if("${KernelARMPlatform}" STREQUAL "qemu-arm-virt")
     # Use the pre-built working FreeRTOS binary directly
-    set(FREERTOS_BINARY_PATH "/home/konton-otome/phd/freertos_vexpress_a9/Build/freertos_image.bin")
+    set(FREERTOS_BINARY_PATH "/home/iamfo470/phd/camkes-vm-examples/projects/vm-examples/apps/Arm/vm_freertos/qemu-arm-virt/freertos_image.bin")
     
     # Copy working FreeRTOS binary to build directory  
     add_custom_command(
